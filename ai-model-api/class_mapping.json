@@ -1,0 +1,9 @@
+{
+    "acne": ["acne-prone skin", "broken skin"],
+    "acne skin": ["acne-prone skin"],
+    "hair follicles": ["hair follicles", "breakouts", "inflammation"],
+    "keratosis_pilaris": ["rough skin", "bumpy skin"],
+    "rosacea": ["redness", "facial flushing"],
+    "seborrheic_dermatitis": ["uneven skin tone", "dry patches"]
+  }
+  

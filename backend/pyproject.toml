@@ -1,0 +1,26 @@
+[project]
+name = "aurora-django-backend"
+version = "0.1.0"
+description = "Aurora Organics Django Backend"
+dependencies = [
+    "Django>=5.2.0",
+    "djangorestframework>=3.14.0",
+    "django-cors-headers>=4.3.0",
+    "djangorestframework-simplejwt>=5.3.0",
+    "google-auth>=2.23.0",
+    "google-auth-oauthlib>=1.0.0",
+    "stripe>=7.0.0",
+    "Pillow>=10.0.0",
+    "opencv-python>=4.8.0",
+    "pandas>=2.0.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "uvicorn[standard]>=0.24.0",
+    "gunicorn>=21.2.0"
+]
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+

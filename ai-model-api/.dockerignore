@@ -1,0 +1,7 @@
+# Ignore environment variables and build artifacts
+env/
+.venv/
+__pycache__/
+*.py[cod]
+.env
+requirements.txt

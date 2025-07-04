@@ -1,0 +1,121 @@
+
+/* Basic reset for the footer container, with consistent background. */
+.footer {
+  position: relative;
+  background: rgb(205, 250, 205);
+  backdrop-filter: blur(var(--primary));
+  /* You can also try a solid color or gradient, e.g.
+     background: var(--primary-color); */
+  padding: 2rem 0;
+  color: var(--footer-text);
+  font-family: var(--font-family);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Container pattern used throughout site (e.g., width: 90%, max-width: 1200px) */
+.footer .container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Grid layout for columns */
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Brand section (logo/title) */
+.footer-brand h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+.footer-brand p {
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+/* Column titles and links */
+.footer-column h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* Footer links list */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-links li {
+  margin-bottom: 0.4rem;
+}
+.footer-links a {
+  color: var(--footer-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color var(--transition-speed);
+}
+.footer-links a:hover {
+  color: var(--dark);
+}
+
+/* Social icons */
+.social-icons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.social-icons a {
+  font-size: 1.2rem;
+  color: var(--text-color);
+  transition: color var(--transition-speed);
+}
+.social-icons a:hover {
+  color: var(--accent-color);
+}
+
+/* Copyright area */
+.footer .copyright {
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 1rem;
+  font-size: 0.8rem;
+  color: #000000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  /* Make brand span the full width on smaller screens if you like */
+  .footer-brand {
+    grid-column: span 2;
+    margin-bottom: 1rem;
+  }
+  .footer-grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 1.5rem 0;
+  }
+  .footer-brand h3 {
+    font-size: 1rem;
+  }
+  .footer-column h3 {
+    font-size: 0.95rem;
+  }
+  .footer-links a {
+    font-size: 0.85rem;
+  }
+}

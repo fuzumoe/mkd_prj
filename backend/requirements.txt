@@ -1,0 +1,36 @@
+# Django Core
+Django>=5.2.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.0
+
+# Database
+psycopg2-binary>=2.9.0  # For PostgreSQL support (optional)
+
+# Authentication & Security
+djangorestframework-simplejwt>=5.3.0
+django-allauth>=0.57.0
+
+# API & External Services
+requests>=2.31.0
+google-auth>=2.23.0
+google-auth-oauthlib>=1.0.0
+google-auth-httplib2>=0.1.0
+stripe>=7.0.0
+
+# Image Processing & ML (for potential AI integration)
+Pillow>=10.0.0
+numpy>=1.24.0
+opencv-python>=4.8.0
+
+# Utilities
+python-decouple>=3.8
+python-dotenv>=1.0.0
+
+# Development
+django-debug-toolbar>=4.2.0
+django-extensions>=3.2.0
+
+# Testing
+pytest>=7.4.0
+pytest-django>=4.5.0
+factory-boy>=3.3.0

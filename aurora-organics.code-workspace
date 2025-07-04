@@ -1,0 +1,42 @@
+{
+  "folders": [
+    {
+      "name": "Aurora Organics (Root)",
+      "path": "."
+    },
+    {
+      "name": "Django Backend",
+      "path": "./backend"
+    },
+    {
+      "name": "Flask AI Model",
+      "path": "./ai-model-api"
+    },
+    {
+      "name": "React Frontend",
+      "path": "./frontend"
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "./.venv/bin/python",
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "debug.allowBreakpointsEverywhere": true
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.debugpy",
+      "ms-vscode.vscode-json",
+      "bradlc.vscode-tailwindcss",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-typescript-next",
+      "ms-python.flake8",
+      "ms-python.black-formatter"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [],
+    "compounds": []
+  }
+}
