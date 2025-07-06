@@ -1,4 +1,4 @@
-version: "3.8"
+ 
 
 services:
   django-backend:
@@ -14,10 +14,6 @@ services:
       - ALLOWED_HOSTS=*
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     restart: unless-stopped
     networks:
       - aurora-organics-network
@@ -35,18 +31,14 @@ services:
       - MODEL_PATH=/app/aurora.h5
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     restart: unless-stopped
     networks:
       - aurora-organics-network
 
   react-frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
     ports:
       - "80:80"
     environment:
