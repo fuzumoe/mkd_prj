@@ -13,11 +13,14 @@ if ! git diff --quiet; then
 fi
 
 ###############################################
-# Configurable app names                      #
+# Configurable app names & secrets            #
 ###############################################
 DJANGO_APP="mkd-django-backend"
 FLASK_APP="mkd-flask-api"
 FRONT_APP="mkd-frontend"
+
+# Stripe secret key (change or export before running)
+STRIPE_SECRET_KEY="${STRIPE_SECRET_KEY:-sk_test_CHANGE_ME}"
 
 ###############################################
 # 0. Heroku Container Registry login          #
@@ -32,6 +35,8 @@ heroku apps:info -a "$DJANGO_APP" >/dev/null 2>&1 || heroku create "$DJANGO_APP"
 heroku stack:set container -a "$DJANGO_APP"
 heroku container:push web    -a "$DJANGO_APP"
 heroku container:release web -a "$DJANGO_APP"
+# Set required env vars (Stripe)
+heroku config:set STRIPE_SECRET_KEY="$STRIPE_SECRET_KEY" -a "$DJANGO_APP"
 cd ..
 
 ###############################################
@@ -65,7 +70,6 @@ cd ..
 ###############################################
 # 4. Smoke tests                              #
 ###############################################
-# Open each app in the default browser (one at a time)
 heroku open -a "$DJANGO_APP"
 heroku open -a "$FLASK_APP"
 heroku open -a "$FRONT_APP"
