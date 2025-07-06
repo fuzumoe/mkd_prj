@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -19,7 +18,7 @@ DJANGO_APP="mkd-django-backend"
 FLASK_APP="mkd-flask-api"
 FRONT_APP="mkd-frontend"
 
-# Stripe secret key (change or export before running)
+# Stripe secret key (export a real one before running)
 STRIPE_SECRET_KEY="${STRIPE_SECRET_KEY:-sk_test_CHANGE_ME}"
 
 ###############################################
@@ -35,7 +34,6 @@ heroku apps:info -a "$DJANGO_APP" >/dev/null 2>&1 || heroku create "$DJANGO_APP"
 heroku stack:set container -a "$DJANGO_APP"
 heroku container:push web    -a "$DJANGO_APP"
 heroku container:release web -a "$DJANGO_APP"
-# Set required env vars (Stripe)
 heroku config:set STRIPE_SECRET_KEY="$STRIPE_SECRET_KEY" -a "$DJANGO_APP"
 cd ..
 
@@ -50,22 +48,24 @@ heroku container:release web -a "$FLASK_APP"
 cd ..
 
 ###############################################
-# 3. React frontend                           #
+# 3. React frontend (build-args, no .env file) #
 ###############################################
-export VITE_DJANGO_API_URL="https://${DJANGO_APP}.herokuapp.com"
-export VITE_FLASK_API_URL="https://${FLASK_APP}.herokuapp.com"
+VITE_DJANGO_API_URL="https://${DJANGO_APP}.herokuapp.com"
+VITE_FLASK_API_URL="https://${FLASK_APP}.herokuapp.com"
 
-cd frontend
-printf "VITE_DJANGO_API_URL=%s
-" "$VITE_DJANGO_API_URL" > .env.production
-printf "VITE_FLASK_API_URL=%s
-" "$VITE_FLASK_API_URL"  >> .env.production
-
+# Ensure the Heroku app exists and is on container stack
 heroku apps:info -a "$FRONT_APP" >/dev/null 2>&1 || heroku create "$FRONT_APP"
 heroku stack:set container -a "$FRONT_APP"
-heroku container:push web    -a "$FRONT_APP"
+
+# Build image locally with build-args, push, then release
+docker build \
+  -t registry.heroku.com/${FRONT_APP}/web \
+  --build-arg VITE_DJANGO_API_URL="$VITE_DJANGO_API_URL" \
+  --build-arg VITE_FLASK_API_URL="$VITE_FLASK_API_URL" \
+  -f frontend/Dockerfile frontend
+
+docker push registry.heroku.com/${FRONT_APP}/web
 heroku container:release web -a "$FRONT_APP"
-cd ..
 
 ###############################################
 # 4. Smoke tests                              #
