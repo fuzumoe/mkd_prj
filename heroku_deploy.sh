@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -50,8 +51,10 @@ export VITE_DJANGO_API_URL="https://${DJANGO_APP}.herokuapp.com"
 export VITE_FLASK_API_URL="https://${FLASK_APP}.herokuapp.com"
 
 cd frontend
-printf "VITE_DJANGO_API_URL=%s\n" "$VITE_DJANGO_API_URL" > .env.production
-printf "VITE_FLASK_API_URL=%s\n" "$VITE_FLASK_API_URL"  >> .env.production
+printf "VITE_DJANGO_API_URL=%s
+" "$VITE_DJANGO_API_URL" > .env.production
+printf "VITE_FLASK_API_URL=%s
+" "$VITE_FLASK_API_URL"  >> .env.production
 
 heroku apps:info -a "$FRONT_APP" >/dev/null 2>&1 || heroku create "$FRONT_APP"
 heroku stack:set container -a "$FRONT_APP"
@@ -60,8 +63,11 @@ heroku container:release web -a "$FRONT_APP"
 cd ..
 
 ###############################################
-# 4. Smoke test                               #
+# 4. Smoke tests                              #
 ###############################################
+# Open each app in the default browser (one at a time)
+heroku open -a "$DJANGO_APP"
+heroku open -a "$FLASK_APP"
 heroku open -a "$FRONT_APP"
 
 echo -e "
@@ -70,4 +76,4 @@ Access your apps:
   Flask API      → https://${FLASK_APP}.herokuapp.com
   Frontend       → https://${FRONT_APP}.herokuapp.com
 
-🎉 Deployment complete. Frontend opened in browser."
+🎉 Deployment complete. All three apps opened in browser."
