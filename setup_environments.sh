@@ -28,6 +28,23 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
+# Check if Heroku CLI is installed
+if ! command -v heroku &> /dev/null; then
+    print_status "Installing Heroku CLI..."
+    curl -fsSL https://cli-assets.heroku.com/install.sh | sh
+    
+    # Verify installation
+    if ! command -v heroku &> /dev/null; then
+        print_error "Failed to install Heroku CLI. Please install it manually:"
+        echo -e "${YELLOW}    curl https://cli-assets.heroku.com/install.sh | sh${NC}"
+        echo -e "${YELLOW}    or visit: https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli${NC}"
+    else
+        print_status "Heroku CLI installed successfully!"
+    fi
+else
+    print_status "Heroku CLI is already installed"
+fi
+
 # Install uv if not present
 if ! command -v uv &> /dev/null; then
     print_status "Installing uv..."
