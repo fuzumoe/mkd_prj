@@ -106,32 +106,6 @@ setup_ai_model_env
 # Return to project root
 cd "$PROJECT_ROOT"
 
-# Create backend activation script
-cat > activate_backend.sh << EOF
-#!/bin/bash
-echo "Activating Django backend environment..."
-cd "$PROJECT_ROOT/backend"
-source .venv/bin/activate
-echo "Django backend environment activated!"
-echo "Run server: cd myproject && python manage.py runserver"
-echo "To deactivate: deactivate"
-EOF
-chmod +x activate_backend.sh
-
-# Create AI model activation script
-cat > activate_ai_model.sh << EOF
-#!/bin/bash
-echo "Activating AI Model API environment..."
-cd "$PROJECT_ROOT/ai-model-api"
-source .venv/bin/activate
-echo "AI Model API environment activated!"
-echo "Run server: python app.py"
-echo "To deactivate: deactivate"
-EOF
-chmod +x activate_ai_model.sh
-
-print_status "Created activation scripts: activate_backend.sh and activate_ai_model.sh"
-
 # Setup frontend if Node.js is available
 if command -v node &> /dev/null; then
     FRONTEND_DIR="$PROJECT_ROOT/frontend"
@@ -144,7 +118,34 @@ else
     print_warning "Node.js not found - skipping frontend setup"
 fi
 
-print_status "Don't forget to set up Git hooks to prevent committing secrets:"
-echo -e "${YELLOW}    ./setup_git_hooks.sh${NC}"
+
+
+# Generate .env file if it doesn't exist
+if [ ! -f "$PROJECT_ROOT/.env" ]; then
+    print_status "Generating .env file template..."
+    cat > "$PROJECT_ROOT/.env" << 'EOF'
+# Heroku API Key - Get from https://dashboard.heroku.com/account
+# Go to Account Settings -> API Key -> Reveal
+HEROKU_API_KEY=your-heroku-api-key-here
+
+# Stripe Secret Key - Get from https://dashboard.stripe.com/apikeys
+# Use test key for development, live key for production
+STRIPE_SECRET_KEY=sk_test_your-stripe-secret-key-here
+ 
+EOF
+    print_status "Created .env file template at $PROJECT_ROOT/.env"
+    print_warning "Please update the .env file with your actual credentials:"
+    echo -e "${YELLOW}    1. Add your Heroku API Key${NC}"
+    echo -e "${YELLOW}    2. Add your Stripe Secret Key${NC}"
+    echo ""
+    print_status "To get your Heroku API Key:"
+    echo -e "${YELLOW}    Visit https://dashboard.heroku.com/account and reveal your API key${NC}"
+    echo ""
+    print_status "To get your Stripe Secret Key:"
+    echo -e "${YELLOW}    Visit https://dashboard.stripe.com/apikeys and copy your secret key${NC}"
+else
+    print_status ".env file already exists - skipping generation"
+fi
+
 echo ""
 print_status "Setup completed successfully! 🎉"
