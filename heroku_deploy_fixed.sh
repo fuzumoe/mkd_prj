@@ -80,19 +80,19 @@ deploy_directory() {
     echo "🔍  Checking if container image already exists..."
     if docker images | grep -q "registry.heroku.com/${app}/web"; then
       echo "💭  Container image already exists - push skipped"
-      # Still need to release the existing image
-    else
-      # Single attempt - if it fails, it's likely a real issue
-      echo "🐳  Pushing container for $app..."
-      if heroku container:push web -a "$app"; then
-        echo "✅  Container push successful for $app"
-      else
-        echo "❌  Container push failed for $app"
-        # Don't return here - still try to release any existing image
-      fi
+      return 0
     fi
     
-    # Always try to release the container (whether pushed or existing)
+    # Single attempt - if it fails, it's likely a real issue
+    echo "🐳  Pushing container for $app..."
+    if heroku container:push web -a "$app"; then
+      echo "✅  Container push successful for $app"
+    else
+      echo "💭  Container push skipped - image may already exist"
+      return 1
+    fi
+    
+    # Release the container
     echo "🚀  Releasing container for $app..."
     heroku container:release web -a "$app"
   )
@@ -126,19 +126,18 @@ build_frontend() {
   echo "🔍  Checking if frontend container image already exists..."
   if docker images | grep -q "registry.heroku.com/${FRONT_APP}/web"; then
     echo "💭  Frontend container image already exists - push skipped"
-    # Still need to release the existing image
+    return 0
+  fi
+
+  # Single attempt - if it fails, it's likely a real issue
+  echo "🐳  Pushing frontend container..."
+  if docker push "registry.heroku.com/${FRONT_APP}/web"; then
+    echo "✅  Frontend container push successful"
   else
-    # Single attempt - if it fails, it's likely a real issue
-    echo "🐳  Pushing frontend container..."
-    if docker push "registry.heroku.com/${FRONT_APP}/web"; then
-      echo "✅  Frontend container push successful"
-    else
-      echo "❌  Frontend container push failed"
-      # Don't return here - still try to release any existing image
-    fi
+    echo "💭  Frontend container push skipped - image may already exist"
+    return 1
   fi
   
-  # Always try to release the container (whether pushed or existing)
   echo "🚀  Releasing frontend container..."
   heroku container:release web -a "$FRONT_APP"
 }
@@ -166,7 +165,7 @@ main() {
   
   if heroku apps:info -a "$DJANGO_APP" >/dev/null 2>&1; then
     django_url=$(heroku info -a "$DJANGO_APP" | grep "Web URL" | awk '{print $3}')
-    echo "  Django  → ${django_url}health/"
+    echo "  Django  → ${django_url}api/health/"
   else
     echo "  Django  → ❌ Not deployed"
   fi
@@ -187,23 +186,22 @@ main() {
   
   echo "✅  Deployment process completed!"
   
-  # Display deployed application URLs
-  echo ""
-  echo "🌐  Deployed applications:"
-  
+  # Open apps in browser (health endpoints for backend services)
   if heroku apps:info -a "$DJANGO_APP" >/dev/null 2>&1; then
     django_url=$(heroku info -a "$DJANGO_APP" | grep "Web URL" | awk '{print $3}')
-    echo "  📱  Django health: ${django_url}health/"
+    echo "🌐  Opening Django health endpoint..."
+    python3 -m webbrowser "${django_url}api/health/" 2>/dev/null || true
   fi
   
   if heroku apps:info -a "$FLASK_APP" >/dev/null 2>&1; then
     flask_url=$(heroku info -a "$FLASK_APP" | grep "Web URL" | awk '{print $3}')
-    echo "  🔬  Flask health: ${flask_url}health"
+    echo "🌐  Opening Flask health endpoint..."
+    python3 -m webbrowser "${flask_url}health" 2>/dev/null || true
   fi
   
   if heroku apps:info -a "$FRONT_APP" >/dev/null 2>&1; then
-    react_url=$(heroku info -a "$FRONT_APP" | grep "Web URL" | awk '{print $3}')
-    echo "  ⚛️  React frontend: ${react_url}"
+    echo "🌐  Opening React frontend..."
+    heroku open -a "$FRONT_APP" || true
   fi
 }
 
