@@ -98,6 +98,27 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           echo "🌐 Deployed Applications:"
-          echo "📱 Django Backend: https://${DJANGO_APP}.herokuapp.com/health/"
-          echo "🔬 Flask API: https://${FLASK_APP}.herokuapp.com/health"
-          echo "⚛️ React Frontend: https://${FRONT_APP}.herokuapp.com/"
+          
+          # Get actual Django URL
+          if heroku apps:info -a $DJANGO_APP >/dev/null 2>&1; then
+            django_url=$(heroku info -a $DJANGO_APP | grep "Web URL" | awk '{print $3}')
+            echo "📱 Django Backend: ${django_url}health/"
+          else
+            echo "📱 Django Backend: ❌ Not deployed"
+          fi
+          
+          # Get actual Flask URL
+          if heroku apps:info -a $FLASK_APP >/dev/null 2>&1; then
+            flask_url=$(heroku info -a $FLASK_APP | grep "Web URL" | awk '{print $3}')
+            echo "🔬 Flask API: ${flask_url}health"
+          else
+            echo "🔬 Flask API: ❌ Not deployed"
+          fi
+          
+          # Get actual React URL
+          if heroku apps:info -a $FRONT_APP >/dev/null 2>&1; then
+            react_url=$(heroku info -a $FRONT_APP | grep "Web URL" | awk '{print $3}')
+            echo "⚛️ React Frontend: ${react_url}"
+          else
+            echo "⚛️ React Frontend: ❌ Not deployed"
+          fi
