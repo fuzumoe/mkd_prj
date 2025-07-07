@@ -102,39 +102,45 @@ jobs:
           # Wait for Django release
           if heroku apps:info -a $DJANGO_APP >/dev/null 2>&1; then
             echo "🔄 Waiting for Django release..."
-            for i in {1..12}; do
-              if heroku ps -a $DJANGO_APP | grep -q "web.*up"; then
+            for i in {1..8}; do
+              dyno_status=$(heroku ps -a $DJANGO_APP 2>/dev/null || echo "no dynos")
+              echo "   Django dyno status: $dyno_status"
+              if echo "$dyno_status" | grep -q "web.*up\|web.*idle"; then
                 echo "✅ Django release completed"
                 break
               fi
-              echo "   Attempt $i/12: Django still starting..."
-              sleep 10
+              echo "   Attempt $i/8: Django still starting..."
+              sleep 15
             done
           fi
           
           # Wait for Flask release
           if heroku apps:info -a $FLASK_APP >/dev/null 2>&1; then
             echo "🔄 Waiting for Flask release..."
-            for i in {1..12}; do
-              if heroku ps -a $FLASK_APP | grep -q "web.*up"; then
+            for i in {1..8}; do
+              dyno_status=$(heroku ps -a $FLASK_APP 2>/dev/null || echo "no dynos")
+              echo "   Flask dyno status: $dyno_status"
+              if echo "$dyno_status" | grep -q "web.*up\|web.*idle"; then
                 echo "✅ Flask release completed"
                 break
               fi
-              echo "   Attempt $i/12: Flask still starting..."
-              sleep 10
+              echo "   Attempt $i/8: Flask still starting..."
+              sleep 15
             done
           fi
           
           # Wait for React release
           if heroku apps:info -a $FRONT_APP >/dev/null 2>&1; then
             echo "🔄 Waiting for React release..."
-            for i in {1..12}; do
-              if heroku ps -a $FRONT_APP | grep -q "web.*up"; then
+            for i in {1..8}; do
+              dyno_status=$(heroku ps -a $FRONT_APP 2>/dev/null || echo "no dynos")
+              echo "   React dyno status: $dyno_status"
+              if echo "$dyno_status" | grep -q "web.*up\|web.*idle"; then
                 echo "✅ React release completed"
                 break
               fi
-              echo "   Attempt $i/12: React still starting..."
-              sleep 10
+              echo "   Attempt $i/8: React still starting..."
+              sleep 15
             done
           fi
           
