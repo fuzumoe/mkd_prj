@@ -93,6 +93,45 @@ jobs:
           docker push "registry.heroku.com/${FRONT_APP}/web"
           heroku container:release web -a $FRONT_APP
 
+      - name: Health Check Deployed Services
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          echo "🔍 Checking service health..."
+          
+          # Check Django health
+          if heroku apps:info -a $DJANGO_APP >/dev/null 2>&1; then
+            django_url=$(heroku info -a $DJANGO_APP | grep "Web URL" | awk '{print $3}')
+            echo "🩺 Testing Django health endpoint..."
+            if curl -f "${django_url}health/" --max-time 30; then
+              echo "✅ Django backend is healthy"
+            else
+              echo "⚠️ Django backend health check failed"
+            fi
+          fi
+          
+          # Check Flask health
+          if heroku apps:info -a $FLASK_APP >/dev/null 2>&1; then
+            flask_url=$(heroku info -a $FLASK_APP | grep "Web URL" | awk '{print $3}')
+            echo "🩺 Testing Flask health endpoint..."
+            if curl -f "${flask_url}health" --max-time 30; then
+              echo "✅ Flask API is healthy"
+            else
+              echo "⚠️ Flask API health check failed"
+            fi
+          fi
+          
+          # Check React frontend
+          if heroku apps:info -a $FRONT_APP >/dev/null 2>&1; then
+            react_url=$(heroku info -a $FRONT_APP | grep "Web URL" | awk '{print $3}')
+            echo "🩺 Testing React frontend..."
+            if curl -f "${react_url}" --max-time 30; then
+              echo "✅ React frontend is healthy"
+            else
+              echo "⚠️ React frontend health check failed"
+            fi
+          fi
+
       - name: Display Deployment URLs
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
