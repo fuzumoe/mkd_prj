@@ -2,7 +2,13 @@ name: Deploy to Heroku (multi‑container)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]  # Only trigger on main branch
+  workflow_dispatch:    # Allow manual triggers
+    inputs:
+      confirm_deploy:
+        description: 'Type "deploy" to confirm'
+        required: true
+        default: 'no'
 
 jobs:
   deploy:
