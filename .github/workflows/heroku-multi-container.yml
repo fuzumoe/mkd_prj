@@ -28,5 +28,5 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          chmod +x ./deploy.sh
+          chmod +x ./heroku_deploy.sh
           ./heroku_deploy.sh
